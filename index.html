@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mental Health & All Diagnosis Summary Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #d0f1ff 0%, #eef7fa 100%);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .main-container {
+      background: rgba(255,255,255,0.98);
+      margin-top: 40px;
+      padding: 36px 30px 28px 30px;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(33, 150, 243, 0.16);
+      max-width: 850px;
+      width: 97vw;
+      border: 2.5px solid #4fd2ff;
+    }
+    h1 {
+      background: linear-gradient(90deg, #1976d2, #02cfff 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 2.25rem;
+      margin-bottom: 24px;
+      text-align: center;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      text-shadow: 0 2px 14px #a9d5ff20;
+    }
+    label {
+      font-weight: 540;
+      margin-bottom: 11px;
+      display: block;
+      color: #007dbf;
+      font-size: 1.18rem;
+      letter-spacing: 0.3px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 13px;
+      border-radius: 10px;
+      border: 2px solid #4fd2ff;
+      font-size: 1.09rem;
+      resize: vertical;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin-bottom: 18px;
+      background: #eafffd;
+      transition: border 0.2s;
+    }
+    textarea:focus {
+      border: 2.5px solid #02cfff;
+      outline: none;
+      background: #fafdff;
+    }
+    .options-row {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      font-size: 1.14rem;
+      color: #1976d2;
+      justify-content: center;
+    }
+    .options-row label {
+      cursor: pointer;
+      transition: color 0.18s;
+    }
+    .options-row input[type="radio"]:checked + span {
+      color: #00b4d8;
+      font-weight: bold;
+      text-shadow: 0 0 3px #90caf9;
+    }
+    .doctor-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      margin-top: 2px;
+    }
+    .doctor-row select {
+      font-size: 1rem;
+      padding: 8px 12px;
+      border-radius: 7px;
+      border: 2px solid #4fd2ff;
+      background: #fafdff;
+      color: #1976d2;
+      font-weight: 500;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .doctor-row select:focus {
+      border: 2.5px solid #02cfff;
+    }
+    button {
+      background: linear-gradient(90deg, #1976d2 40%, #02cfff 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 36px;
+      font-size: 1.19rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: background 0.15s, box-shadow 0.18s, transform 0.13s;
+      box-shadow: 0 2px 12px rgba(25, 118, 210, 0.17);
+      letter-spacing: 0.03em;
+    }
+    button:hover, .copy-btn:hover {
+      background: linear-gradient(90deg, #155fa0 60%, #00e5ff 100%);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.22);
+    }
+    .copy-btn {
+      background: linear-gradient(90deg, #02cfff 40%, #1976d2 100%);
+      color: white;
+      border: none;
+      border-radius: 9px;
+      padding: 11px 24px;
+      font-size: 1.11rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      margin-left: 7px;
+      margin-top: 2px;
+      transition: background 0.15s, box-shadow 0.18s, transform 0.13s;
+      box-shadow: 0 1px 7px rgba(25, 118, 210, 0.12);
+      letter-spacing: 0.03em;
+      vertical-align: middle;
+    }
+    .copy-btn.copied {
+      background: linear-gradient(90deg, #42e695 40%, #3bb2b8 100%);
+      color: #1976d2;
+      font-weight: bold;
+      box-shadow: 0 1px 10px rgba(33, 243, 141, 0.18);
+    }
+    .output-section {
+      margin-top: 18px;
+      background: rgba(239,247,253,0.96);
+      border-radius: 16px;
+      padding: 22px 24px 20px 24px;
+      border: 2px solid #b3e0fc;
+      box-shadow: 0 3px 18px rgba(25, 118, 210, 0.08);
+      transition: background 0.2s;
+    }
+    .output-section h2 {
+      background: linear-gradient(90deg, #1976d2, #02cfff 70%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.35rem;
+      margin: 0 0 12px 0;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+    .category-list, .diagnosis-list {
+      margin: 0;
+      padding-left: 0;
+      font-size: 1.08rem;
+      color: #155fa0;
+      transition: color 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .category-list li, .diagnosis-list li {
+      list-style: none;
+      background: linear-gradient(90deg, #e3f6ff 60%, #bbeaff 100%);
+      border-radius: 13px;
+      padding: 17px 18px 13px 18px;
+      box-shadow: 0 2px 8px rgba(33, 150, 243, 0.05);
+      border-left: 7px solid #90caf9;
+      transition: background 0.2s;
+      margin: 0;
+      font-size: 1.09em;
+      font-weight: 500;
+    }
+    .diagnosis-list li.doctor-filter {
+      border-left: 7px solid #ffa726;
+      background: linear-gradient(90deg, #fffde7 60%, #ffe0b2 100%);
+      margin-bottom: 0;
+      padding: 18px 24px 18px 24px;
+      box-shadow: 0 1px 8px #ff980050;
+    }
+    .doctor-summary-heading {
+      color: #0288d1;
+      font-weight: 900;
+      font-size: 1.18em;
+      display: block;
+      margin-bottom: 9px;
+      letter-spacing: 0.08em;
+    }
+    .doctor-summary-subheading {
+      color: #ef6c00;
+      font-weight: 900;
+      font-size: 1.09em;
+      margin-bottom: 13px;
+      display: block;
+      letter-spacing: 0.03em;
+    }
+    .diagnosis-details {
+      color: #1976d2;
+      font-size: 1.01em;
+      margin-top: 4px;
+      margin-left: 3px;
+      word-break: break-word;
+      margin-bottom: 2px;
+    }
+    .diagnosis-details ul {
+      margin: 0 0 0 14px;
+      padding-left: 17px;
+    }
+    .diagnosis-details li {
+      margin-bottom: 2px;
+      background: none;
+      border: none;
+      padding: 0 0 0 0;
+      color: #1976d2;
+      font-size: 1.01em;
+      font-weight: 400;
+      box-shadow: none;
+      border-radius: 0;
+      display: list-item;
+      list-style: disc;
+      margin-left: 10px;
+    }
+    .diagnosis-details .count {
+      color: #ef6c00;
+      font-weight: bold;
+      font-size: 1.06em;
+      margin-left: 7px;
+    }
+    .diagnosis-title {
+      font-weight: bold;
+      font-size: 1.07em;
+      color: #1976d2;
+      margin-bottom: 3px;
+    }
+    .diagnosis-count {
+      color: #00bcd4;
+      font-size: 0.97em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .category-title {
+      font-weight: bold;
+      color: #1976d2;
+      font-size: 1.01em;
+      letter-spacing: 0.3px;
+      display: inline-block;
+      margin-bottom: 3px;
+    }
+    .category-key {
+      font-weight: 900;
+      font-size: 1.13em;
+      margin-right: 4px;
+      color: #1976d2;
+      text-shadow: 0 1px 6px #dbeafe90;
+    }
+    .mental-other-label {
+      color: #ff9800;
+      font-weight: bold;
+      font-size: 1.09em;
+    }
+    .credit {
+      margin-top: 44px;
+      color: #1976d2;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      text-align: center;
+      opacity: 0.87;
+      padding-bottom: 18px;
+    }
+    @media (max-width: 900px) { .main-container { max-width: 99vw; } }
+    @media (max-width: 600px) { .main-container { padding: 12px 2vw; margin-top: 16px; } }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <h1>Mental Health & All Diagnosis Summary Tool</h1>
+    <label for="inputData">
+      Paste your diagnoses list (one per line or column):
+    </label>
+    <textarea id="inputData" placeholder="Example:&#10;Anxiety disorder, unspecified OPD Dr. Maumoon Shareef&#10;Depressive episode OPD Dr. Rajeshekar Yelahanka Ravikumar&#10;Psychotherapy OPD Aminath Raziya"></textarea>
+    <div class="options-row">
+      <label><input type="radio" name="mode" value="all" checked> <span>All Diagnosis Summary</span></label>
+      <label><input type="radio" name="mode" value="mh"> <span>Mental Health Consultation Classifier</span></label>
+      <label><input type="radio" name="mode" value="doctor"> <span>Filter by Professional</span></label>
+    </div>
+    <div class="doctor-row" id="doctorFilter" style="display:none;">
+      <label for="doctorSelect" style="margin-bottom:0;">Select Professional:</label>
+      <select id="doctorSelect"></select>
+    </div>
+    <button onclick="processDiagnoses()">Generate Summary</button>
+    <button id="copyBtn" class="copy-btn" onclick="copySummary()" style="display:none;">Copy Summary</button>
+    <div class="output-section" id="outputSection" style="display:none;">
+      <h2 id="summaryTitle"></h2>
+      <ul class="category-list" id="categoryList" style="display:none;"></ul>
+      <ul class="diagnosis-list" id="diagnosisList" style="display:none;"></ul>
+    </div>
+  </div>
+  <div class="credit">
+    Toggle between all diagnosis summary, grouped mental health conditions, or filter by professional.<br>
+    <b>“Other Mental Health”</b> collects mental health diagnoses not fitting A–H. General medical conditions are excluded in mental health mode.<br>
+    <b>Use "Copy Summary" to instantly copy your report for sharing.</b>
+  </div>
+  <script>
+    // === ADD DOCTORS HERE (with "Dr. " in name) ===
+    const availableDoctors = [
+      "Dr. Rajeshekar Yelahanka Ravikumar",
+      "Dr. Maumoon Shareef"
+      // Add more doctors as needed
+    ];
+    // === ADD PSYCHOLOGISTS HERE (no "Dr.") ===
+    const availablePsychologists = [
+      "Aminath Raziya",
+      "Niki Das",
+      "Asiyath Abdul Hadi",
+      "Fathimath Shahuru",
+      "Saranya Dhananjanyan",
+      "Zulaiha Ahmed"
+      // Add more psychologists as needed
+    ];
+
+    // For mental health filtering (can add more if needed)
+    const approvedMentalHealthDoctors = [...availableDoctors];
+    const approvedMentalHealthPsychologists = [...availablePsychologists];
+
+    // Mental health categories A–H
+    const categories = [
+      { key: "a", name: "Anxiety or Fear-Related Disorders", css: "category-a",
+        keywords: ["anxiety", "panic", "phobia", "gad", "agoraphobia", "generalized anxiety", "social anxiety", "specific phobia", "fear"] },
+      { key: "b", name: "Mood Disorders (including depression and bipolar disorder)", css: "category-b",
+        keywords: ["depression", "depressive", "bipolar", "mania", "manic", "dysthymia", "mood disorder"] },
+      { key: "c", name: "Schizophrenia and Other Primary Psychotic Disorders", css: "category-c",
+        keywords: ["schizophrenia", "psychosis", "psychotic", "schizoaffective", "delusional", "hallucination"] },
+      { key: "d", name: "Obsessive-Compulsive or Related Disorders", css: "category-d",
+        keywords: ["obsessive", "compulsive", "ocd"] },
+      { key: "e", name: "PTSD and Other Stress-Related Disorders", css: "category-e",
+        keywords: ["ptsd", "post-traumatic", "stress", "adjustment disorder", "acute stress", "trauma"] },
+      { key: "f", name: "Disorders of Intellectual Development", css: "category-f",
+        keywords: ["intellectual", "developmental disorder", "mental retardation", "learning disability", "autism", "adhd"] },
+      { key: "g", name: "Substance Use Disorders", css: "category-g",
+        keywords: ["alcohol", "substance", "drug", "addiction", "dependence", "abuse", "opioid", "cannabis", "cocaine", "smoking", "nicotine"] },
+      { key: "h", name: "Self-Harm and Suicide-Related Behaviors", css: "category-h",
+        keywords: ["suicide", "self-harm", "suicidal", "overdose", "self injury", "self-injury"] }
+    ];
+
+    // Keywords for "Other Mental Health"
+    const otherMentalHealthKeywords = [
+      "mental", "psychiatric", "psychological", "counseling", "counselling", "psychotherapy", "behavioral",
+      "behavioural", "psychosocial", "emotional disturbance", "psych eval", "psych evalution", "psych evaluation"
+    ];
+
+    let latestSummaryText = '';
+
+    // Helper for filtering by professional name (case-insensitive exact match)
+    function containsProfessional(text, professional) {
+      return text.toLowerCase().includes(professional.toLowerCase());
+    }
+    function containsAnyApprovedMentalHealthProfessional(text) {
+      for (const doc of approvedMentalHealthDoctors) {
+        if (text.toLowerCase().includes(doc.toLowerCase())) return true;
+      }
+      for (const psy of approvedMentalHealthPsychologists) {
+        if (text.toLowerCase().includes(psy.toLowerCase())) return true;
+      }
+      return false;
+    }
+
+    function updateProfessionalSelect() {
+      const select = document.getElementById('doctorSelect');
+      select.innerHTML = '';
+      // Doctors first, then psychologists (no Dr.)
+      availableDoctors.concat(availablePsychologists).forEach(prof => {
+        let option = document.createElement('option');
+        option.value = prof;
+        option.textContent = prof;
+        select.appendChild(option);
+      });
+    }
+
+    // Show/hide professional filter dropdown based on mode
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        if (this.value === "doctor") {
+          document.getElementById('doctorFilter').style.display = '';
+          updateProfessionalSelect();
+        } else {
+          document.getElementById('doctorFilter').style.display = 'none';
+        }
+      });
+    });
+
+    function processDiagnoses() {
+      const input = document.getElementById('inputData').value.trim();
+      if (!input) {
+        alert('Please paste your list of diagnoses.');
+        return;
+      }
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      const lines = input.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+      let summaryText = '';
+
+      if (mode === "all") {
+        // All diagnosis summary (case-insensitive grouping)
+        const counts = {};
+        const displayNames = {};
+        lines.forEach(diag => {
+          let clean = diag.replace(/^"+|"+$/g, '').replace(/^'+|'+$/g, '').trim();
+          if (!clean) return;
+          const key = clean.toLowerCase();
+          counts[key] = (counts[key] || 0) + 1;
+          if (!displayNames[key]) displayNames[key] = clean;
+        });
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1] || displayNames[a[0]].localeCompare(displayNames[b[0]]));
+        const list = document.getElementById('diagnosisList');
+        list.innerHTML = '';
+        summaryText = 'All Diagnosis Summary:\n';
+        for (const [key, count] of sorted) {
+          const diag = displayNames[key];
+          summaryText += `- ${diag}\n  Total: ${count}\n`;
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <div class="diagnosis-title">${diag}</div>
+            <div class="diagnosis-count">Total: ${count}</div>
+          `;
+          list.appendChild(li);
+        }
+        document.getElementById('summaryTitle').textContent = 'All Diagnosis Summary:';
+        list.style.display = '';
+        document.getElementById('categoryList').style.display = 'none';
+        document.getElementById('outputSection').style.display = sorted.length ? '' : 'none';
+        document.getElementById('copyBtn').style.display = sorted.length ? '' : 'none';
+        if (!sorted.length) alert('No diagnoses found in your data!');
+
+      } else if (mode === "doctor") {
+        // Filter all diagnoses by selected professional, show summary
+        const selectedProfessional = document.getElementById('doctorSelect').value;
+        const isDoctor = availableDoctors.includes(selectedProfessional);
+        const displayName = selectedProfessional; // No Dr. for psychologists, already in doctors list for doctors
+
+        const filtered = lines.filter(line => containsProfessional(line, selectedProfessional));
+        // Group as in all diagnosis summary
+        const counts = {};
+        const displayNames = {};
+        filtered.forEach(diag => {
+          let clean = diag.replace(/^"+|"+$/g, '').replace(/^'+|'+$/g, '').trim();
+          if (!clean) return;
+          const key = clean.toLowerCase();
+          counts[key] = (counts[key] || 0) + 1;
+          if (!displayNames[key]) displayNames[key] = clean;
+        });
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1] || displayNames[a[0]].localeCompare(displayNames[b[0]]));
+        const list = document.getElementById('diagnosisList');
+        list.innerHTML = '';
+        summaryText = `Diagnosis Summary for ${displayName}:\n`;
+
+        // GROUPED, ONE CARD, BULLET LIST, using x N for count, with headings and orange styling
+        if (sorted.length > 0) {
+          const li = document.createElement('li');
+          li.className = "doctor-filter";
+          li.style.display = "block";
+          let html = `<span class="doctor-summary-heading">Diagnosis Summary for ${displayName}:</span>`;
+          html += `<span class="doctor-summary-subheading">Diagnoses for ${displayName}</span>`;
+          html += `<ul class="diagnosis-details" style="margin-top:4px;color:#ff9800;">`;
+          for (const [key, count] of sorted) {
+            const diag = displayNames[key];
+            html += `<li style="margin-bottom:3px;"><span style="color:#1976d2;">${diag}</span> <span class="count">x ${count}</span></li>`;
+            summaryText += `  - ${diag} (x ${count})\n`;
+          }
+          html += "</ul>";
+          li.innerHTML = html;
+          list.appendChild(li);
+        }
+
+        document.getElementById('summaryTitle').textContent = ``;
+        list.style.display = sorted.length ? '' : 'none';
+        document.getElementById('categoryList').style.display = 'none';
+        document.getElementById('outputSection').style.display = sorted.length ? '' : 'none';
+        document.getElementById('copyBtn').style.display = sorted.length ? '' : 'none';
+        if (!sorted.length) alert('No diagnoses found for this professional!');
+      } else {
+        // Mental Health Consultation Classifier (with professional filtering)
+        const results = {};
+        const otherMental = [];
+        categories.forEach(cat => { results[cat.name] = []; });
+        lines.forEach(diag => {
+          let cleanDiag = diag.replace(/^"+|"+$/g, '').replace(/^'+|'+$/g, '').trim();
+          if (!containsAnyApprovedMentalHealthProfessional(cleanDiag)) return;
+          if (!cleanDiag.toLowerCase().includes("opd")) return;
+          let found = false;
+          for (let idx = 0; idx < categories.length; idx++) {
+            const cat = categories[idx];
+            for (const kw of cat.keywords) {
+              if (new RegExp(`\\b${kw}\\b`, "i").test(cleanDiag)) {
+                results[cat.name].push(cleanDiag);
+                found = true;
+                break;
+              }
+            }
+            if (found) break;
+          }
+          if (!found) {
+            for (const kw of otherMentalHealthKeywords) {
+              if (new RegExp(`\\b${kw}\\b`, "i").test(cleanDiag)) {
+                otherMental.push(cleanDiag);
+                found = true;
+                break;
+              }
+            }
+          }
+        });
+        const list = document.getElementById('categoryList');
+        list.innerHTML = '';
+        let anyListed = false;
+        summaryText = 'Consultation Count by Condition Type:\n';
+        categories.forEach((cat, idx) => {
+          const arr = results[cat.name];
+          if (arr.length > 0) {
+            anyListed = true;
+            summaryText += `${cat.key}. ${cat.name}\nTotal: ${arr.length}\n`;
+            // Group same diagnoses in category (optional, for extra polish):
+            const diagCounts = {};
+            arr.forEach(diag => {
+              diagCounts[diag] = (diagCounts[diag]||0)+1;
+            });
+            summaryText += arr.map(x => `  - ${x}`).join("\n") + "\n";
+            const ul = `<ul class="diagnosis-details" style="margin-bottom:0;margin-top:7px;">${
+              Object.entries(diagCounts).map(([d,c])=>`<li>${d}${c>1?` <span class="count">x ${c}</span>`:""}</li>`).join("")
+            }</ul>`;
+            const li = document.createElement('li');
+            li.className = cat.css;
+            li.innerHTML = `<span class="category-key">${cat.key}.</span> <span class="category-title">${cat.name}</span><br>
+              <span class="diagnosis-count"><b>Total:</b> ${arr.length}</span>
+              ${ul}`;
+            list.appendChild(li);
+          }
+        });
+        if (otherMental.length > 0) {
+          summaryText += `i. Other Mental Health\nTotal: ${otherMental.length}\n`;
+          otherMental.forEach(x => summaryText += `  - ${x}\n`);
+          const diagCounts = {};
+          otherMental.forEach(diag => {
+            diagCounts[diag] = (diagCounts[diag]||0)+1;
+          });
+          const ul = `<ul class="diagnosis-details" style="margin-bottom:0;margin-top:7px;">${
+            Object.entries(diagCounts).map(([d,c])=>`<li>${d}${c>1?` <span class="count">x ${c}</span>`:""}</li>`).join("")
+          }</ul>`;
+          const li = document.createElement('li');
+          li.className = 'mental-other';
+          li.innerHTML = `<span class="category-key">i.</span> <span class="mental-other-label">Other Mental Health</span><br>
+            <span class="diagnosis-count"><b>Total:</b> ${otherMental.length}</span>
+            ${ul}`;
+          list.appendChild(li);
+          anyListed = true;
+        }
+        document.getElementById('summaryTitle').textContent = 'Consultation Count by Condition Type:';
+        list.style.display = '';
+        document.getElementById('diagnosisList').style.display = 'none';
+        document.getElementById('outputSection').style.display = anyListed ? '' : 'none';
+        document.getElementById('copyBtn').style.display = anyListed ? '' : 'none';
+        if (!anyListed) {
+          alert('No mental health diagnoses found in your data!');
+        }
+      }
+      latestSummaryText = summaryText.trim();
+      // Reset copy button if needed
+      const copyBtn = document.getElementById('copyBtn');
+      copyBtn.classList.remove('copied');
+      copyBtn.textContent = "Copy Summary";
+    }
+
+    function copySummary() {
+      if (!latestSummaryText) return;
+      navigator.clipboard.writeText(latestSummaryText).then(function() {
+        const copyBtn = document.getElementById('copyBtn');
+        copyBtn.classList.add('copied');
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.textContent = "Copy Summary";
+        }, 2000);
+      });
+    }
+    // Initialize professional select if needed
+    updateProfessionalSelect();
+  </script>
+</body>
+</html>
